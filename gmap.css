@@ -1,0 +1,105 @@
+
+#map {
+    height: 100vh;
+    width: 100vw;
+}
+
+#search-bar {
+    width: 500px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+
+}
+
+#search-input {
+    width: 500px;
+    padding: 5px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+}
+
+#search-input:focus {
+    border-bottom-color: #007bff;
+}
+
+#search-results {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 500px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+#search-results li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#search-results li:hover {
+    background-color: #f2f2f2;
+}
+
+.btn {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.marker-label {
+    position: absolute;
+    top: -25px;
+    left: -5px;
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 5px;
+}
+
+#means-fare-inputs {
+    padding: 10px;
+    display: none;
+}
+
+#means-fare-inputs > div {
+    padding-top: 10px;
+}
+
+#result-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+#popup {
+    margin: 20px, 20px, 20px, 0;
+    width: 500px;
+    display: none;
+    position: relative;
+}
+
+#close-btn {
+    background-color:crimson
+}
