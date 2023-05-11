@@ -2,32 +2,40 @@
 <html>
 <head>
     <link rel="stylesheet" href="gmap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Google Maps Website</title>
 </head>
-<div id="map"></div>
-<div id="search-bar">
-    <input type="text" id="search-input" placeholder="Search for an address">
-    <ul id="search-results"></ul>
-    <div id="means-fare-inputs">
-        <div>
-            <label for="means-of-transport">Means of Transport:</label>
-            <input type="text" id="means-of-transport">
+<body>
+    <div id="map"></div>
+    <div id="search-bar">
+        <input type="text" id="search-input" placeholder="Search for an address">
+        <ul id="search-results"></ul>
+        <div id="means-fare-inputs">
+            <div>
+                <label for="means-of-transport">Means of Transport:</label>
+                <select id="means-of-transport">
+                  <option value="Auto">Auto</option>
+                  <option value="E-Rickshaw">E-Rickshaw</option>
+                  <option value="Shared Auto">Shared Auto</option>
+                  <option value="Metro">Metro</option>
+                  <option value="Walk">Walk</option>
+                  <option value="Bus">Bus</option>
+                </select>
+            </div>
+            <div>
+                <label for="fare">Fare:</label>
+                <input type="number" id="fare" min="0" step="1">
+            </div>
+            <button id="submit-btn" class="btn">Submit</button>
         </div>
-        <div>
-            <label for="fare">Fare:</label>
-            <input type="number" id="fare" min="0" step="1">
+        <button id="close-btn" class="btn"><i class="fas fa-trash-alt"> Clear</i></button>
+        <div id="popup">
+            <div id="result-container"></div>
+            <button id="save-route-btn" class="btn">Save Route</button>
         </div>
-        <button id="submit-btn" class="btn">Submit</button>
     </div>
-    <button id="place-marker-btn" class="btn">Place Marker</button>
-    <button id="show-route-btn" class="btn">Show Route</button>
-    <div id="popup">
-        <button id="close-btn" class="btn">X</button>
-        <div id="result-container"></div>
-    </div>
-</div>
 
-<script src="config.js"></script>
-<script src="gmap.js"></script>
+    <script src="config.js"></script>
+    <script src="gmap.js"></script>
 </body>
 </html>

@@ -1,14 +1,15 @@
 
 #map {
-    height: 100vh;
-    width: 100vw;
+    height: calc(100vh - 20px); /* Adjust the height as needed */
+    width: 100%;
+    overflow-x: hidden;
 }
 
 #search-bar {
     width: 500px;
     position: absolute;
-    top: 20px;
-    left: 20px;
+    top: 70px;
+    left: 15px;
     z-index: 1;
     background-color: #fff;
     padding: 10px;
@@ -18,7 +19,6 @@
 
 #search-input {
     width: 500px;
-    padding: 5px;
     border: none;
     font-size: 16px;
     outline: none;
@@ -91,6 +91,8 @@
 #result-container {
     border: 1px solid #ccc;
     padding: 20px;
+    height: 45vh; /* Set the desired height */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 #popup {
@@ -101,5 +103,27 @@
 }
 
 #close-btn {
-    background-color:crimson
+    background-color:crimson;
+    position: absolute;
+    top: -13px;
+    right: -100px;
+    padding: 15px 15px 15px 15px;
+    transition: filter 0.3s ease; /* Add transition for smooth effect */
 }
+
+#close-btn:hover {
+    filter: brightness(80%); /* Apply the darkening effect on hover */
+}
+
+#save-route-btn {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  #save-route-btn:hover {
+    background-color: darkgreen;
+  }
