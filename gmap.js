@@ -30,45 +30,70 @@ function initMap () {
 
   // Create a new Autocomplete instance and bind it to the search input
   var autocomplete = new google.maps.places.Autocomplete(searchInput)
+  var addresses = []
+  var addressPairs = []
 
   // Add a listener for the place_changed event on the Autocomplete instance
- autocomplete.addListener('place_changed', function () {
-    var place = autocomplete.getPlace();
+  autocomplete.addListener('place_changed', function () {
+    var place = autocomplete.getPlace()
 
     // Check if the place object is valid
     if (place.geometry && place.geometry.location) {
-        // Check if the marker already exists at the selected place's location
-        var existingMarker = getExistingMarker(place.geometry.location);
-        if (existingMarker) {
-            // Marker already exists, do not create a new one
-            return;
-        }
+      // Check if the marker already exists at the selected place's location
+      var existingMarker = getExistingMarker(place.geometry.location)
+      if (existingMarker) {
+        // Marker already exists, do not create a new one
+        return
+      }
 
-        // Create a new marker and set it on the map
-        var marker = new google.maps.Marker({
-            position: place.geometry.location,
-            map: map,
-            draggable: true,
-            label: {
-                text: markerCounter.toString(),
-                className: 'marker-label'
+      // Create a new marker and set it on the map
+      var marker = new google.maps.Marker({
+        position: place.geometry.location,
+        map: map,
+        draggable: true,
+        label: {
+          text: markerCounter.toString(),
+          className: 'marker-label'
+        }
+      })
+
+      // Add the marker to the markers array
+      markers.push(marker)
+      markerLabels.push(markerCounter)
+
+      // Update the map center
+      map.setCenter(place.geometry.location)
+
+      // Geocode the position to get the address
+      geocoder.geocode(
+        { location: place.geometry.location },
+        function (results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            if (results[0]) {
+              var address = results[0].formatted_address
+
+              // Add the address to the addresses array
+              addresses.push(address)
+              console.log(addresses)
+
+              if (markers.length >= 2) {
+                meansFareInputs.style.display = 'block'
+              }
+
+              // Call displayResults to update the display
+              displayResults()
+            } else {
+              console.log('Address not found')
             }
-        });
-
-        // Add the marker to the markers array
-        markers.push(marker);
-        markerLabels.push(markerCounter);
-
-        // Update the map center
-        map.setCenter(place.geometry.location);
-
-        markerCounter++;
-
-        if (markers.length >= 2) {
-            meansFareInputs.style.display = 'block';
+          } else {
+            console.log('Geocoder failed: ' + status)
+          }
         }
+      )
+
+      markerCounter++
     }
-});
+  })
 
   placeMarkerBtn.addEventListener('click', function () {
     var input = searchInput.value
@@ -162,77 +187,58 @@ function initMap () {
   submitBtn.addEventListener('click', function () {
     // Check if there are at least two markers
     if (markers.length >= 2) {
-      var addresses = []
-      var meansOfTransportValues = []
-      var fareValues = []
+      // Retrieve addresses and associate means of transport and fare values
+      var geocodeCounter = 0 // Counter to keep track of geocoding requests
 
-      // Retrieve addresses
-      for (var i = 0; i < markers.length; i++) {
-        var position = markers[i].getPosition()
+      // Get the means of transport and fare values
+      var meansOfTransport = meansOfTransportInput.value || ''
+      var fare = fareInput.value || ''
 
-        // Geocode the position to get the address
-        geocoder.geocode({ location: position }, function (results, status) {
-          if (status === google.maps.GeocoderStatus.OK) {
-            if (results[0]) {
-              addresses.push(results[0].formatted_address)
-            } else {
-              addresses.push('Address not found')
-            }
-          } else {
-            addresses.push('Geocoder failed: ' + status)
-          }
-
-          // Check if all geocoding requests are complete
-          if (addresses.length === markers.length) {
-            displayResults()
-          }
-        })
+      // Create an address pair object with the current and previous address
+      var pair = {
+        currentAddress: addresses[addresses.length - 1],
+        previousAddress: addresses[addresses.length - 2],
+        meansOfTransport: meansOfTransport,
+        fare: fare
       }
 
-      // Retrieve means of transport and fare values
-      var meansOfTransport = meansOfTransportInput.value
-      var fare = fareInput.value
+      // Add the address pair to the array
+      addressPairs.push(pair)
+      // Show the popup
+      popup.style.display = 'block'
 
-      // Push means of transport and fare values for each marker
-      for (var i = 0; i < markers.length; i++) {
-        meansOfTransportValues.push(meansOfTransport || '')
-        fareValues.push(fare || '')
-      }
-
-      // Function to display the results
-      function displayResults () {
-        // Do something with the data (e.g., submit it to a server)
-        console.log('Addresses:', addresses)
-        console.log('Means of Transport:', meansOfTransportValues)
-        console.log('Fare:', fareValues)
-
-        // Display the information in the result container
-        var resultHTML = ''
-        for (var j = 0; j < addresses.length; j++) {
-          resultHTML += `<p>Address ${j + 1}: ${addresses[j]}</p>`
-          resultHTML += `<p>Means of Transport ${j + 1}: ${
-            meansOfTransportValues[j]
-          }</p>`
-          resultHTML += `<p>Fare ${j + 1}: ${fareValues[j]}</p>`
-          resultHTML += '<hr>'
-        }
-        resultContainer.innerHTML = resultHTML
-
-        // Show the popup
-        popup.style.display = 'block'
-
-        closeBtn.addEventListener('click', function () {
-          // Hide the popup
-          popup.style
-          // Hide the popup
-          popup.style.display = 'none'
-        })
-
-        // Clear the directions renderer
-        directionsRenderer.set('directions', null)
-      }
+      // Call displayResults to update the display
+      displayResults()
     }
   })
+
+  // Function to display the results
+  function displayResults () {
+    // Do something with the data (e.g., submit it to a server)
+    console.log('Address Pairs:', addressPairs)
+
+    // Display the information in the result container
+    var resultHTML = ''
+    for (var j = 0; j < addressPairs.length; j++) {
+      var pair = addressPairs[j]
+      resultHTML += `<p>Address ${j + 1}: ${pair.currentAddress}</p>`
+      resultHTML += `<p>Previous Address ${j + 1}: ${pair.previousAddress}</p>`
+      resultHTML += `<p>Means of Transport ${j + 1}: ${
+        pair.meansOfTransport
+      }</p>`
+      resultHTML += `<p>Fare ${j + 1}: ${pair.fare}</p>`
+      resultHTML += '<hr>'
+    }
+    resultContainer.innerHTML = resultHTML
+
+    closeBtn.addEventListener('click', function () {
+      // Hide the popup
+      popup.style.display = 'none'
+    })
+
+    // Clear the directions renderer
+    directionsRenderer.set('directions', null)
+  }
 
   // Function to check if a marker already exists at a given location
   function getExistingMarker (location) {
