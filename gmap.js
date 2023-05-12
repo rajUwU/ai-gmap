@@ -33,6 +33,7 @@ function initMap () {
   var autocomplete = new google.maps.places.Autocomplete(searchInput)
   var addresses = []
   var addressPairs = []
+  var addressCords = []
 
   // Add a listener for the place_changed event on the Autocomplete instance
   autocomplete.addListener('place_changed', function () {
@@ -71,26 +72,30 @@ function initMap () {
         function (results, status) {
           if (status === google.maps.GeocoderStatus.OK) {
             if (results[0]) {
-              var address = results[0].formatted_address
-
-              // Add the address to the addresses array
-              addresses.push(address)
-              console.log(addresses)
-
+              var address = results[0].formatted_address;
+              var latitude = place.geometry.location.lat();
+              var longitude = place.geometry.location.lng();
+      
+              // Add the address and its coordinates to the arrays
+              addresses.push(address);
+              addressCords.push({ latitude: latitude, longitude: longitude });
+              console.log(addresses);
+              console.log(addressCords);
+      
               if (markers.length >= 2) {
-                meansFareInputs.style.display = 'block'
+                meansFareInputs.style.display = 'block';
               }
-
+      
               // Call displayResults to update the display
-              displayResults()
+              displayResults();
             } else {
-              console.log('Address not found')
+              console.log('Address not found');
             }
           } else {
-            console.log('Geocoder failed: ' + status)
+            console.log('Geocoder failed: ' + status);
           }
         }
-      )
+      );
 
       markerCounter++
       if (markers.length >= 2) {
@@ -131,7 +136,7 @@ function initMap () {
         }
       })
     }
-  }
+  }g
   var geocoder = new google.maps.Geocoder()
 
   submitBtn.addEventListener('click', function () {
@@ -204,32 +209,6 @@ function initMap () {
       markerLabels = []
     })
   }
-
-  saveRouteBtn.addEventListener('click', function () {
-    // Convert the addressPairs array to JSON string
-    var jsonData = JSON.stringify(addressPairs)
-
-    // Save the JSON data to localStorage
-    localStorage.setItem('savedAddressPairs', jsonData)
-
-    // Display a success message or perform any other actions as needed
-    console.log('Address pairs saved successfully!')
-
-    // Retrieve the saved addressPairs data from localStorage
-    var savedAddressPairs = localStorage.getItem('savedAddressPairs')
-
-    if (savedAddressPairs) {
-      try {
-        // Parse the JSON data back to an array
-        addressPairs = JSON.parse(savedAddressPairs)
-
-        // Perform any necessary actions with the parsed data
-        console.log('Address pairs retrieved successfully:', addressPairs)
-      } catch (error) {
-        console.error('Error parsing saved address pairs data:', error)
-      }
-    }
-  })
 
   // Function to check if a marker already exists at a given location
   function getExistingMarker (location) {
