@@ -2,14 +2,30 @@
 <html>
 <head>
     <link rel="stylesheet" href="gmap.css">
+    <link rel="stylesheet" href="search.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>Google Maps Website</title>
 </head>
 <body>
     <div id="map"></div>
+    <div id="switch-container">
+        <label class="switch">
+          <input id="search-switch" type="checkbox">
+          <span class="slider round"></span>
+        </label>
+        <span id="switch-label">Find Mode</span>
+    </div>
+
     <div id="search-bar">
+        <div id="search-bar-1">
+            <input type="text" id="search-input-1" placeholder="Search location 1">
+        </div>
+        <div id="search-bar-2">
+            <input type="text" id="search-input-2" placeholder="Search location 2">
+        </div>
         <input type="text" id="search-input" placeholder="Search for an address">
         <ul id="search-results"></ul>
+        <button id="search-btn">Search</button>
         <div id="means-fare-inputs">
             <div>
                 <label for="means-of-transport">Means of Transport:</label>
@@ -38,8 +54,12 @@
         <div id="saved-routes"></div>
         <!-- Display the saved routes here -->
     </div>
-    <script src="route.js"></script>    
+    <script src="
+      https://cdn.jsdelivr.net/npm/string-similarity@4.0.4/umd/string-similarity.min.js
+      "></script>
+    <script src="route.js"></script>
     <script src="config.js"></script>
     <script src="gmap.js"></script>
+    <script src="search.js"></script>
 </body>
 </html>

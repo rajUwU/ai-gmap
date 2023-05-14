@@ -1,3 +1,8 @@
+html {
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+  }
+
 
 #map {
     height: calc(100vh - 20px); /* Adjust the height as needed */
@@ -141,4 +146,9 @@
     padding: 20px;
     z-index: 1;
     overflow-y: auto; /* Enable vertical scrolling */
-}
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 3px 3px 0px;
+  }
+
+  #saved-routes {
+    padding-bottom: 20px;
+  }

@@ -5,7 +5,7 @@ var directionsRenderer
 var markerLabels = []
 var markerCounter = 1
 var selectedMarker
-
+var polylines = []
 var searchInput = document.getElementById('search-input')
 var meansOfTransportInput = document.getElementById('means-of-transport')
 var fareInput = document.getElementById('fare')
@@ -13,11 +13,15 @@ var submitBtn = document.getElementById('submit-btn')
 var meansFareInputs = document.getElementById('means-fare-inputs')
 var resultContainer = document.getElementById('result-container')
 var popup = document.getElementById('popup')
-var saveRouteBtn = document.getElementById('save-route-btn');
+var saveRouteBtn = document.getElementById('save-route-btn')
 var clearBtn = document.getElementById('clear-btn')
-
+var searchInput1 = document.getElementById('search-input-1')
+var searchInput2 = document.getElementById('search-input-2')
 
 function initMap () {
+  
+  //Innitialize Find Mode
+  initializeFindMode();
   // Create a new map instance
   var center = { lat: 37.7749, lng: -122.4194 }
   map = new google.maps.Map(document.getElementById('map'), {
@@ -152,11 +156,10 @@ function initMap () {
     }
     resultContainer.innerHTML = resultHTML
   }
-
   clearBtn.addEventListener('click', function () {
-
     // Enable the search input
-    searchInput.disabled = false;
+    searchInput.disabled = false
+
     // Clear all input boxes
     meansOfTransportInput.value = ''
     fareInput.value = ''
@@ -168,6 +171,8 @@ function initMap () {
 
     // Clear the search input
     searchInput.value = ''
+    searchInput1.value= ''
+    searchInput2.value = ''  
 
     // Remove all markers from the map and clear the markers array
     markers.forEach(function (marker) {
@@ -178,6 +183,9 @@ function initMap () {
     // Clear the directions renderer
     directionsRenderer.set('directions', null)
 
+    // Remove existing polyline from the map
+    removePolylines()
+
     // Clear other arrays
     addressPairs = []
     addresses = []
@@ -185,18 +193,24 @@ function initMap () {
   })
 
   saveRouteBtn.addEventListener('click', function () {
-    // Push a copy of the addressPairs array to the savedRoutes array
-    savedRoutes.push({ addressPairs: [...addressPairs], id: savedRoutes.length + 1 });
+    // Determine the ID for the new route
+    var newId = savedRoutes.length > 0 ? savedRoutes[savedRoutes.length - 1].id + 1 : 1;
+  
+    // Push a copy of the addressPairs array to the savedRoutes array with the new ID
+    savedRoutes.push({
+      addressPairs: [...addressPairs],
+      id: newId
+    });
     console.log('Route saved:', addressPairs);
-
+  
     // Save the updated savedRoutes array to local storage
     localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
-
+  
     // Update the side panel to display the saved routes
     displaySavedRoutes();
     clearBtn.click();
   });
-  
+
   // Function to check if a marker already exists at a given location
   function getExistingMarker (location) {
     for (var i = 0; i < markers.length; i++) {
@@ -208,17 +222,17 @@ function initMap () {
   }
 }
 
-function showRoute () {
+function showRoute() {
   // Check if there are at least two markers
   if (markers.length >= 2) {
-    var waypoints = []
+    var waypoints = [];
 
     // Add the markers' positions as waypoints
-    for (var i = 1; i < markers.length - 1; i++) {
+    for (var i = 1; i < markers.length; i++) {
       waypoints.push({
         location: markers[i].getPosition(),
         stopover: true
-      })
+      });
     }
 
     // Create a directions request object
@@ -228,14 +242,37 @@ function showRoute () {
       waypoints: waypoints,
       optimizeWaypoints: true,
       travelMode: google.maps.TravelMode.DRIVING
-    }
+    };
 
     // Send the directions request to the DirectionsService
-    directionsService.route(request, function (result, status) {
+    directionsService.route(request, function(result, status) {
       if (status === google.maps.DirectionsStatus.OK) {
         // Display the directions on the map
-        directionsRenderer.setDirections(result)
+        directionsRenderer.setDirections(result);
+
+        // Modify the result to remove paths between markers where the current marker has means of transport as "Metro"
+        var modifiedRoute = JSON.parse(JSON.stringify(result));
+        var legs = modifiedRoute.routes[0].legs;
+
+        for (var i = 1; i < legs.length; i++) {
+          var currentMarker = markers[i];
+          var previousMarker = markers[i - 1];
+
+          if (currentMarker.meansOfTransport === 'Metro' && previousMarker) {
+            // Remove the path between currentMarker and previousMarker
+            legs[i - 1].steps = [];
+          }
+        }
+
+        // Update the directions on the map with the modified route
+        directionsRenderer.setDirections(modifiedRoute);
       }
-    })
+    });
   }
+}
+function removePolylines() {
+  polylines.forEach(function(polyline) {
+    polyline.setMap(null);
+  });
+  polylines = [];
 }
