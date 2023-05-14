@@ -102,7 +102,7 @@
     position: relative;
 }
 
-#close-btn {
+#clear-btn {
     background-color:crimson;
     position: absolute;
     top: -13px;
@@ -111,7 +111,7 @@
     transition: filter 0.3s ease; /* Add transition for smooth effect */
 }
 
-#close-btn:hover {
+#clear-btn:hover {
     filter: brightness(80%); /* Apply the darkening effect on hover */
 }
 
@@ -129,7 +129,7 @@
   }
 
   #side-panel {
-    display: none;
+    display: block;
     position: absolute;
     top: 60px;
     right: 20px;
@@ -140,4 +140,5 @@
     overflow-y: auto;
     padding: 20px;
     z-index: 1;
+    overflow-y: auto; /* Enable vertical scrolling */
 }
